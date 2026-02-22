@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "./components/ui/dialog";
 import useSpeechToText from "./hooks/use-speech-to-text";
+import { format } from "date-fns";
 
 const entrySchema = z.object({
   date: z.string().min(1, "Date required"),
@@ -308,7 +309,7 @@ function TimesheetForm() {
       data: formData.entries.map(({ date, hours, task }) => ({
         project_manager_id: formData.managerId,
         project_id: formData.projectId,
-        start_date: date,
+        start_date: format(date, "dd-MM-yyyy"),
         total_hours: hours,
         task: task,
       })),
