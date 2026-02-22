@@ -10,7 +10,7 @@ app.use(express.json());
 
 const baseURL = "https://hrms.adsmn.in";
 
-async function submitTimesheets({ email, password, projects }) {
+async function submitTimesheets({ email, password, data }) {
   const jar = new CookieJar();
   const client = wrapper(
     axios.create({
@@ -57,10 +57,10 @@ async function submitTimesheets({ email, password, projects }) {
   if (!submitToken || !staffId)
     throw new Error("Could not extract required fields");
 
-  console.log("✅ Logged in, submitting", projects.length, "projects...");
+  console.log("✅ Logged in, submitting", data.length, "data...");
 
-  // 4️⃣ Submit all projects concurrently
-  const requests = projects.map((proj) =>
+  // 4️⃣ Submit all data concurrently
+  const requests = data.map((proj) =>
     client.post(
       `${baseURL}/backend/store-project`,
       new URLSearchParams({
@@ -82,7 +82,7 @@ async function submitTimesheets({ email, password, projects }) {
   const results = await Promise.allSettled(requests);
 
   return results.map((r, i) => ({
-    project: projects[i],
+    data: data[i],
     success: r.status === "fulfilled" && [200, 204].includes(r.value.status),
     status: r.status === "fulfilled" ? r.value.status : null,
     error: r.status === "rejected" ? r.reason.message : null,
@@ -91,14 +91,14 @@ async function submitTimesheets({ email, password, projects }) {
 
 app.post("/submit-timesheet", async (req, res) => {
   try {
-    const { email, password, projects } = req.body;
-    if (!email || !password || !Array.isArray(projects) || !projects.length) {
+    const { email, password, data } = req.body;
+    if (!email || !password || !Array.isArray(data) || !data.length) {
       return res
         .status(400)
         .json({ success: false, message: "Missing required fields" });
     }
 
-    const result = await submitTimesheets({ email, password, projects });
+    const result = await submitTimesheets({ email, password, data });
     res.json({ success: true, results: result });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
