@@ -70,12 +70,18 @@ function FieldError({ errors }: { errors?: { message: string }[] }) {
 }
 
 interface SubmitDialogProps {
+  isLoading: boolean;
   open: boolean;
   onClose: () => void;
   onConfirm: (email: string, password: string) => void;
 }
 
-function SubmitDialog({ open, onClose, onConfirm }: SubmitDialogProps) {
+function SubmitDialog({
+  open,
+  onClose,
+  onConfirm,
+  isLoading,
+}: SubmitDialogProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   // TanStack Form managing the email + password fields inside the dialog
@@ -187,7 +193,7 @@ function SubmitDialog({ open, onClose, onConfirm }: SubmitDialogProps) {
             {([canSubmit, isSubmitting]) => (
               <button
                 type="button"
-                disabled={!canSubmit}
+                disabled={!canSubmit || isLoading}
                 onClick={() => credForm.handleSubmit()}
                 className={cn(
                   "flex items-center gap-2 px-5 h-9 rounded-lg text-sm font-medium transition-colors",
@@ -197,7 +203,7 @@ function SubmitDialog({ open, onClose, onConfirm }: SubmitDialogProps) {
                 )}
               >
                 <Send className="h-3.5 w-3.5" />
-                {isSubmitting ? "Submitting…" : "Submit"}
+                {isSubmitting || isLoading ? "Submitting…" : "Submit"}
               </button>
             )}
           </credForm.Subscribe>
@@ -267,6 +273,7 @@ function TaskCell({ value, onChange, errors }: TaskCellProps) {
 
 function TimesheetForm() {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm({
@@ -318,11 +325,15 @@ function TimesheetForm() {
     console.log("Payload:", payload);
 
     try {
-      const res = await fetch("http://localhost:3000/submit-timesheet", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      setIsLoading(true);
+      const res = await fetch(
+        "https://4wwwxm3tj8.execute-api.ap-south-1.amazonaws.com/submit-timesheet",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        },
+      );
 
       if (!res.ok) {
         throw new Error("Failed to submit timesheet");
@@ -336,12 +347,15 @@ function TimesheetForm() {
     } catch (err) {
       console.error("Error submitting timesheet:", err);
       toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   }
 
   return (
     <>
       <SubmitDialog
+        isLoading={isLoading}
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         onConfirm={handleDialogConfirm}
