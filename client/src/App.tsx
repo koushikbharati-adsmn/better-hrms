@@ -317,26 +317,26 @@ function TimesheetForm() {
 
     console.log("Payload:", payload);
 
-    // try {
-    //   const res = await fetch("/api/timesheet", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(payload),
-    //   });
+    try {
+      const res = await fetch("http://localhost:3000/submit-timesheet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-    //   if (!res.ok) {
-    //     throw new Error("Failed to submit timesheet");
-    //   }
+      if (!res.ok) {
+        throw new Error("Failed to submit timesheet");
+      }
 
-    //   const data = await res.json();
-    //   console.log("Response:", data);
-    //   toast.success("Timesheet submitted successfully!");
-    //   setDialogOpen(false);
-    //   form.reset();
-    // } catch (err) {
-    //   console.error("Error submitting timesheet:", err);
-    //   toast.error("Failed to submit timesheet");
-    // }
+      const data = await res.json();
+      console.log("Response:", data);
+      toast.success("Timesheet submitted successfully!");
+      setDialogOpen(false);
+      form.reset();
+    } catch (err) {
+      console.error("Error submitting timesheet:", err);
+      toast.error("Something went wrong. Please try again.");
+    }
   }
 
   return (
