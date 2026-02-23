@@ -232,7 +232,7 @@ function TaskCell({ value, onChange, errors }: TaskCellProps) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         rows={1}
-        placeholder="Describe the work done…"
+        placeholder="Describe the work done"
         className="flex-1 text-sm leading-relaxed text-zinc-800 bg-transparent outline-none resize-none placeholder:text-zinc-400"
         onInput={(e) => {
           const t = e.currentTarget;
@@ -363,12 +363,14 @@ function TimesheetForm() {
 
       <div className="flex flex-col h-screen bg-white overflow-hidden">
         <header className="shrink-0 border-b  bg-white">
-          <div className="mx-auto max-w-6xl px-10">
+          <div className="mx-auto max-w-6xl px-4 sm px-4:sm:px-10">
             <div className="flex items-center justify-between py-4 border-b ">
               <div className="flex items-baseline gap-3">
                 <h1 className="text-base font-semibold tracking-tight text-zinc-700">
-                  Timesheet
+                  Better HRMS
                 </h1>
+                <span className="text-zinc-400">&middot;</span>
+                <p className="text-sm text-zinc-600">Timesheet</p>
               </div>
             </div>
 
@@ -400,7 +402,7 @@ function TimesheetForm() {
         </header>
 
         <main className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-6xl px-10">
+          <div className="mx-auto max-w-6xl px-4 sm:px-10">
             <form.Field name="entries" mode="array">
               {(field) => (
                 <table className="w-full">
@@ -476,7 +478,7 @@ function TimesheetForm() {
                             )}
                           </form.Field>
                         </td>
-                        <td className="py-4 pl-3">
+                        <td className="py-4 px-3">
                           <button
                             type="button"
                             onClick={() => field.removeValue(index)}
@@ -551,7 +553,7 @@ function TimesheetForm() {
         </main>
 
         <footer className="shrink-0 border-t  bg-white">
-          <div className="mx-auto max-w-6xl px-10 py-4 flex items-center justify-between gap-6">
+          <div className="mx-auto max-w-6xl px-4 sm:px-10 py-4 flex items-center justify-between gap-6">
             <form.Subscribe selector={(s) => s.values.entries}>
               {(entries) => {
                 const total = entries.reduce((s, e) => s + (e.hours || 0), 0);

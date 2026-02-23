@@ -19,7 +19,7 @@ export default function DatePicker({
       <PopoverTrigger asChild>
         <button
           className={cn(
-            "flex items-center gap-2 text-sm transition-colors hover:text-zinc-800",
+            "flex items-center gap-2 text-sm transition-colors hover:text-zinc-800 whitespace-nowrap",
             value ? "text-zinc-700" : "text-zinc-400",
           )}
         >
